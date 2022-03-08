@@ -9,57 +9,48 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-#knitr::opts_chunk$set(echo = TRUE, error=TRUE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(echo = TRUE, error=TRUE, message=FALSE, warning=FALSE)
 ```
 
-```{r libraries}
-library(tidyverse)     # for graphing and data cleaning
+
+```{r}
+library(tidyverse)     # for data cleaning and plotting
+library(gardenR)       # for Lisa's garden data
 library(lubridate)     # for date manipulation
-library(ggthemes)      # for even more plotting themes
-theme_set(theme_minimal()) # My favorite ggplot() theme :)
+library(openintro)     # for the abbr2state() function
+library(palmerpenguins)# for Palmer penguin data
+library(maps)          # for map data
+library(ggmap)         # for mapping points on maps
+library(gplots)        # for col2hex() function
+library(RColorBrewer)  # for color palettes
+library(sf)            # for working with spatial data
+library(leaflet)       # for highly customizable mapping
+library(ggthemes)      # for more themes (including theme_map())
+theme_set(theme_minimal())
 ```
-
-## Data choice 1: Freedom Data
 
 ```{r}
-# Read in the data
-
-freedom <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-02-22/freedom.csv')
-
-# If the code above gives an error, uncomment the code below and use it instead. 
-# You will need to install the tidytuesdayR package first.
-
-# library(tidytuesdayR)
-# 
-# tuesdata <- tidytuesdayR::tt_load('2022-02-22')
-# tuesdata <- tidytuesdayR::tt_load(2022, week = 8)
-# 
-# freedom <- tuesdata$freedom
+PAstations<- stations %>% 
+  filter(STATE == "PA")
 ```
 
-This week's data is about civil freedoms around the world. Read more about it, including definitions of variables, [here](https://github.com/rfordatascience/tidytuesday/blob/master/data/2022/2022-02-22/readme.md). 
+```{r, fig.alt = "Alternative Fuel Stations In Pennsylvania"}
+PA <- get_stamenmap(
+  bbox = c(left = -80.586, bottom = 39.550, right = -74.598, top = 42.318), 
+  maptype = "toner-hybrid",
+  zoom = 7)
 
-## Data choice 2: Alternative fuel stations
-
-```{r}
-
-# Read in the data
-
-stations <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-03-01/stations.csv')
-
-# If the code above gives an error, uncomment the code below and use it instead. 
-# You will need to install the tidytuesdayR package first.
-
-# library(tidytuesdayR)
-# 
-# tuesdata <- tidytuesdayR::tt_load('2022-03-01')
-# tuesdata <- tidytuesdayR::tt_load(2022, week = 9)
-# 
-# stations <- tuesdata$stations
-
+# Plot the points on the map
+ggmap(PA) + # creates the map "background"
+  geom_point(data = PAstations, 
+             aes(x = X, y = Y), 
+             color = "purple",
+             alpha = 5, 
+             size = 1.1) +
+  labs(title = "Alternative Fuel Stations In Pennsylvania", caption = "Created by Michael Nadeau") +
+  theme_map()
 ```
 
-Read more about the Alternative fuel stations data, including definitions of variables, [here](https://github.com/rfordatascience/tidytuesday/blob/master/data/2022/2022-03-01/readme.md). 
 
 ## Instructions and tips
 
